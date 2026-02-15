@@ -1,7 +1,17 @@
-// 1. Import Firebase dari CDN (Langsung dari Internet)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// 1. Import HANYA Firestore (Database)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    query, 
+    where, 
+    orderBy, 
+    onSnapshot, 
+    serverTimestamp,
+    deleteDoc,
+    doc
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -14,56 +24,96 @@ const firebaseConfig = {
   measurementId: "G-5TTXB1SYVK"
 };
 
-// 3. Inisialisasi Aplikasi
+// 3. Inisialisasi
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
 
-// 4. Referensi Elemen HTML (DOM)
-const loginSection = document.getElementById('login-section');
-const dashboardSection = document.getElementById('dashboard-section');
-const btnLogin = document.getElementById('btn-login-google');
-const btnLogout = document.getElementById('btn-logout');
-const userPhoto = document.getElementById('user-photo');
-const userName = document.getElementById('user-name');
+// 4. LOGIKA ID PERANGKAT (Pengganti Login)
+// Cek apakah browser ini sudah punya ID? Kalau belum, buat baru.
+let userId = localStorage.getItem('budget_user_id');
+if (!userId) {
+    userId = 'user_' + Date.now() + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('budget_user_id', userId);
+}
+document.getElementById('device-id-display').innerText = `ID Perangkat: ${userId}`;
+
+// 5. Referensi Elemen HTML
 const listTransaksi = document.getElementById('transaction-list');
 const elSaldo = document.getElementById('total-balance');
+const btnSave = document.getElementById('btn-save');
 
-// 5. Fitur LOGIN & LOGOUT
-btnLogin.addEventListener('click', () => signInWithPopup(auth, provider));
-btnLogout.addEventListener('click', () => signOut(auth));
+// 6. Fungsi Load Data (Otomatis jalan saat web dibuka)
+function loadTransactions() {
+    // Ambil data dari koleksi 'transactions' dimana uid == userId kita
+    const q = query(
+        collection(db, "transactions"), 
+        where("uid", "==", userId), // Filter punya kita saja
+        orderBy("createdAt", "desc") // Urutkan dari yang terbaru
+    );
 
-// 6. Cek Status Login (Realtime Auth Listener)
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // User Login -> Tampilkan Dashboard
-        loginSection.classList.add('hidden');
-        dashboardSection.classList.remove('hidden');
-        userPhoto.src = user.photoURL;
-        userName.innerText = user.displayName;
-        
-        // Panggil fungsi untuk load data transaksi user ini
-        loadTransactions(user.uid);
-    } else {
-        // User Logout -> Tampilkan Login
-        loginSection.classList.remove('hidden');
-        dashboardSection.classList.add('hidden');
-    }
-});
+    // Listener Realtime
+    onSnapshot(q, (snapshot) => {
+        listTransaksi.innerHTML = "";
+        let totalSaldo = 0;
 
-// 7. Fungsi Tambah Transaksi
-document.getElementById('btn-save').addEventListener('click', async () => {
+        if (snapshot.empty) {
+            listTransaksi.innerHTML = "<li style='text-align:center; color:#888;'>Belum ada transaksi</li>";
+        }
+
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            
+            // Hitung Saldo
+            if (data.type === 'pemasukan') {
+                totalSaldo += data.amount;
+            } else {
+                totalSaldo -= data.amount;
+            }
+
+            // Render List HTML
+            const li = document.createElement('li');
+            li.className = 'transaction-item';
+            // Tombol Hapus (X) ditambahkan
+            li.innerHTML = `
+                <div style="display:flex; justify-content:space-between; width:100%;">
+                    <span>${data.desc}</span>
+                    <span class="${data.type === 'pemasukan' ? 'income' : 'expense'}">
+                        ${data.type === 'pemasukan' ? '+' : '-'} Rp ${data.amount.toLocaleString('id-ID')}
+                    </span>
+                </div>
+                <button class="btn-delete" data-id="${doc.id}" style="background:red; width:30px; margin-left:10px;">X</button>
+            `;
+            listTransaksi.appendChild(li);
+        });
+
+        // Update Saldo Total
+        elSaldo.innerText = `Rp ${totalSaldo.toLocaleString('id-ID')}`;
+
+        // Tambah event listener buat tombol hapus
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = e.target.getAttribute('data-id');
+                if(confirm("Hapus data ini?")) {
+                    await deleteDoc(doc(db, "transactions", id));
+                }
+            });
+        });
+    });
+}
+
+// 7. Fungsi Simpan Data
+btnSave.addEventListener('click', async () => {
     const desc = document.getElementById('input-desc').value;
     const amount = parseInt(document.getElementById('input-amount').value);
-    const type = document.getElementById('input-type').value; // 'pemasukan' atau 'pengeluaran'
-    const user = auth.currentUser;
+    const type = document.getElementById('input-type').value;
 
-    if (desc && amount && user) {
+    if (desc && amount) {
+        btnSave.innerText = "Menyimpan...";
+        btnSave.disabled = true;
+
         try {
-            // Simpan ke Firestore
             await addDoc(collection(db, "transactions"), {
-                uid: user.uid, // Penting: Tandai data ini punya siapa
+                uid: userId, // Kunci: Simpan dengan ID perangkat ini
                 desc: desc,
                 amount: amount,
                 type: type,
@@ -73,51 +123,17 @@ document.getElementById('btn-save').addEventListener('click', async () => {
             // Reset Form
             document.getElementById('input-desc').value = '';
             document.getElementById('input-amount').value = '';
-            alert('Berhasil disimpan!');
         } catch (e) {
-            console.error("Error: ", e);
+            alert("Error: " + e.message);
+        } finally {
+            btnSave.innerText = "Simpan Transaksi";
+            btnSave.disabled = false;
         }
     } else {
-        alert("Mohon isi semua data!");
+        alert("Isi semua data dulu!");
     }
 });
 
-// 8. Fungsi Baca Data Realtime (onSnapshot)
-function loadTransactions(uid) {
-    const q = query(collection(db, "transactions"), orderBy("createdAt", "desc"));
-
-    // Listener Realtime: Jalan setiap ada data berubah di database
-    onSnapshot(q, (snapshot) => {
-        listTransaksi.innerHTML = ""; // Bersihkan list lama
-        let totalSaldo = 0;
-
-        snapshot.forEach((doc) => {
-            const data = doc.data();
-            
-            // Filter: Hanya ambil data milik user yang sedang login
-            if (data.uid === uid) {
-                // Hitung Saldo
-                if (data.type === 'pemasukan') {
-                    totalSaldo += data.amount;
-                } else {
-                    totalSaldo -= data.amount;
-                }
-
-                // Buat Elemen HTML List
-                const li = document.createElement('li');
-                li.className = 'transaction-item';
-                li.innerHTML = `
-                    <span>${data.desc}</span>
-                    <span class="${data.type === 'pemasukan' ? 'income' : 'expense'}">
-                        ${data.type === 'pemasukan' ? '+' : '-'} Rp ${data.amount}
-                    </span>
-                `;
-                listTransaksi.appendChild(li);
-            }
-        });
-
-        // Update Tampilan Saldo
-        elSaldo.innerText = `Rp ${totalSaldo}`;
-    });
-}
-
+// Jalankan fungsi load pertama kali
+loadTransactions();
+                         
