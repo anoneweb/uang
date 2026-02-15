@@ -3,37 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Planner (No Login)</title>
+    <title>Budget Planner Realtime</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-    <div id="dashboard-section" class="container">
+    <div class="container">
         <header>
             <div class="user-info">
-                <h2>💰 Dompetku</h2>
-                <small id="device-id-display" style="color: #888;">ID: ...</small>
+                <h2>📊 Dashboard Keuangan</h2>
+                <small id="device-id-display">ID: ...</small>
             </div>
         </header>
 
         <section class="balance-card">
-            <h2>Saldo Saat Ini</h2>
+            <p>Sisa Saldo Anda</p>
             <h1 id="total-balance">Rp 0</h1>
+        </section>
+
+        <section class="chart-container">
+            <h3>Persentase Pengeluaran</h3>
+            <canvas id="myChart"></canvas> 
         </section>
 
         <section class="input-form">
             <h3>Tambah Transaksi</h3>
-            <input type="text" id="input-desc" placeholder="Keterangan (mis: Makan Siang)">
+            
+            <div class="form-group">
+                <label>Tanggal</label>
+                <input type="date" id="input-date">
+            </div>
+
+            <div class="form-row">
+                <select id="input-type">
+                    <option value="pengeluaran">Pengeluaran (-)</option>
+                    <option value="pemasukan">Pemasukan (+)</option>
+                </select>
+                <select id="input-category">
+                    </select>
+            </div>
+
+            <input type="text" id="input-desc" placeholder="Catatan (Opsional)">
             <input type="number" id="input-amount" placeholder="Nominal (Rp)">
-            <select id="input-type">
-                <option value="pemasukan">Pemasukan (+)</option>
-                <option value="pengeluaran">Pengeluaran (-)</option>
-            </select>
+            
             <button id="btn-save">Simpan Transaksi</button>
         </section>
 
         <section class="history">
-            <h3>Riwayat Terakhir</h3>
+            <h3>Riwayat Transaksi</h3>
             <ul id="transaction-list">
                 <li>Memuat data...</li>
             </ul>
