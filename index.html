@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Planner Realtime</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="login-section" class="container">
+        <h1>Masuk ke Dompetku</h1>
+        <button id="btn-login-google">Login dengan Google</button>
+    </div>
+
+    <div id="dashboard-section" class="container hidden">
+        <header>
+            <div class="user-info">
+                <img id="user-photo" src="" alt="User">
+                <span id="user-name">User</span>
+            </div>
+            <button id="btn-logout">Logout</button>
+        </header>
+
+        <section class="balance-card">
+            <h2>Saldo Saat Ini</h2>
+            <h1 id="total-balance">Rp 0</h1>
+        </section>
+
+        <section class="input-form">
+            <h3>Tambah Transaksi</h3>
+            <input type="text" id="input-desc" placeholder="Keterangan (mis: Makan Siang)">
+            <input type="number" id="input-amount" placeholder="Nominal (Rp)">
+            <select id="input-type">
+                <option value="pemasukan">Pemasukan (+)</option>
+                <option value="pengeluaran">Pengeluaran (-)</option>
+            </select>
+            <button id="btn-save">Simpan Transaksi</button>
+        </section>
+
+        <section class="history">
+            <h3>Riwayat Terakhir</h3>
+            <ul id="transaction-list">
+                </ul>
+        </section>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
