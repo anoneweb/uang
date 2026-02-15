@@ -3,23 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Planner Realtime</title>
+    <title>Budget Planner (No Login)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="login-section" class="container">
-        <h1>Masuk ke Dompetku</h1>
-        <button id="btn-login-google">Login dengan Google</button>
-    </div>
-
-    <div id="dashboard-section" class="container hidden">
+    <div id="dashboard-section" class="container">
         <header>
             <div class="user-info">
-                <img id="user-photo" src="" alt="User">
-                <span id="user-name">User</span>
+                <h2>💰 Dompetku</h2>
+                <small id="device-id-display" style="color: #888;">ID: ...</small>
             </div>
-            <button id="btn-logout">Logout</button>
         </header>
 
         <section class="balance-card">
@@ -41,7 +35,8 @@
         <section class="history">
             <h3>Riwayat Terakhir</h3>
             <ul id="transaction-list">
-                </ul>
+                <li>Memuat data...</li>
+            </ul>
         </section>
     </div>
 
