@@ -3,649 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Copas!</title>
+    <title>Copas! Master Cloud</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
     <style>
-        /* --- CSS Variables (Sistem Tema Terang & Gelap) --- */
+        /* --- CSS Variables (Sistem Tema Telkomsel) --- */
         :root {
-            --bg-main: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-title: #EC2028; /* Merah Khas Telkomsel */
-            --text-main: #333333;
-            --text-muted: #666666;
-            --border-color: #cbd5e0;
-            --input-bg: #f8fafc;
-            --input-focus: #EC2028;
-            
-            --btn-primary: #EC2028;
-            --btn-primary-hover: #c81b22;
-            --btn-primary-shadow: rgba(236, 32, 40, 0.3);
-            
-            --btn-secondary: #334155;
-            --btn-secondary-hover: #1e293b;
-            --btn-secondary-shadow: rgba(51, 65, 85, 0.3);
-            
-            --tab-bg: #e2e8f0;
-            --tab-active: #EC2028;
-            --tab-text: #475569;
-            --tab-active-text: #ffffff;
-            
-            --textarea-bg: #1e293b;
-            --textarea-text: #f8fafc;
-            --textarea-border: #475569;
-            
-            --prorata-bg: #ffffff;
-            --run-text-bg: #fef08a;
-            --run-text-color: #854d0e;
-            --total-box-bg: #f1f5f9;
-            
-            --success-text: #16a34a;
-            --danger-text: #dc2626;
+            --bg-main: #f0f2f5; --card-bg: #ffffff; --text-title: #EC2028; --text-main: #333333;
+            --text-muted: #666666; --border-color: #cbd5e0; --input-bg: #f8fafc; --input-focus: #EC2028;
+            --btn-primary: #EC2028; --btn-primary-hover: #c81b22; --btn-secondary: #334155; --btn-danger: #dc2626;
+            --tab-bg: #e2e8f0; --tab-active: #EC2028; --textarea-bg: #1e293b; --textarea-text: #f8fafc;
+            --run-text-bg: #fef08a; --run-text-color: #854d0e;
         }
 
         [data-theme="dark"] {
-            --bg-main: #0f172a;
-            --card-bg: #1e293b;
-            --text-title: #f87171; /* Merah lebih terang untuk background gelap */
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
-            --input-bg: #0f172a;
-            --input-focus: #f87171;
-            
-            --btn-primary: #dc2626;
-            --btn-primary-hover: #b91c1c;
-            --btn-primary-shadow: rgba(220, 38, 38, 0.3);
-            
-            --btn-secondary: #475569;
-            --btn-secondary-hover: #334155;
-            --btn-secondary-shadow: rgba(71, 85, 105, 0.3);
-            
-            --tab-bg: #0f172a;
-            --tab-active: #dc2626;
-            --tab-text: #cbd5e0;
-            --tab-active-text: #ffffff;
-            
-            --textarea-bg: #000000;
-            --textarea-text: #4ade80; /* Teks hijau bergaya terminal untuk dark mode */
-            --textarea-border: #334155;
-            
-            --prorata-bg: #0f172a;
-            --run-text-bg: #422006;
-            --run-text-color: #fde047;
-            --total-box-bg: #334155;
-            
-            --success-text: #4ade80;
-            --danger-text: #f87171;
+            --bg-main: #0f172a; --card-bg: #1e293b; --text-title: #f87171; --text-main: #f8fafc;
+            --text-muted: #94a3b8; --border-color: #334155; --input-bg: #0f172a; --input-focus: #f87171;
+            --btn-primary: #dc2626; --btn-secondary: #475569; --tab-bg: #0f172a; --textarea-bg: #000000;
+            --textarea-text: #4ade80; --run-text-bg: #422006; --run-text-color: #fde047;
         }
 
-        /* --- Reset & Typography Dasar --- */
         * { box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; /* Ubah agar lebih enak di-scroll */
-            transition: background-color 0.3s ease;
-        }
-
-        /* --- Container Utama (Kartu) --- */
-        .main-card {
-            width: 100%;
-            max-width: 750px;
-            background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            transition: background-color 0.3s ease, color 0.3s ease;
-            margin-top: 2vh;
-        }
-
-        /* --- Header & Theme Toggle --- */
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 15px;
-        }
-        .header-container h2 {
-            margin: 0;
-            color: var(--text-title);
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        .theme-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-        .theme-btn:hover { transform: scale(1.1); }
-
-        h3 { color: var(--text-main); margin-bottom: 20px; font-weight: 700; }
-        
-        /* --- Tab Menu Styles --- */
-        .tab-menu {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-        .tab-btn {
-            background-color: var(--tab-bg);
-            color: var(--tab-text);
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            flex: 1;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .tab-btn.active {
-            background-color: var(--tab-active);
-            color: var(--tab-active-text);
-            box-shadow: 0 4px 15px var(--btn-primary-shadow);
-        }
-        .tab-konten {
-            display: none;
-            animation: fadeIn 0.4s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- Form Styles --- */
-        .form-group { display: flex; flex-direction: column; margin-bottom: 20px; }
-        label { font-weight: 600; margin-bottom: 8px; color: var(--text-muted); font-size: 14px; }
-        select, input[type="text"], input[type="date"], input[type="number"] {
-            padding: 12px 15px;
-            background-color: var(--input-bg);
-            color: var(--text-main);
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 15px;
-            width: 100%;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-        select:focus, input:focus {
-            background-color: var(--card-bg);
-            border-color: var(--input-focus);
-            outline: none;
-        }
-        
-        /* --- Button Styles --- */
-        .button-group { display: flex; gap: 12px; margin-top: 15px; }
-        button {
-            flex: 1; padding: 14px; color: white; border: none; border-radius: 6px; 
-            font-size: 15px; cursor: pointer; font-weight: 600; letter-spacing: 0.5px;
-            transition: all 0.2s;
-        }
-        button:active { transform: translateY(2px); }
-        
-        /* Warna Tombol Baru */
-        .btn-primary { background-color: var(--btn-primary); box-shadow: 0 4px 15px var(--btn-primary-shadow); }
-        .btn-primary:hover { background-color: var(--btn-primary-hover); }
-        .btn-secondary { background-color: var(--btn-secondary); box-shadow: 0 4px 15px var(--btn-secondary-shadow); }
-        .btn-secondary:hover { background-color: var(--btn-secondary-hover); }
-
-        /* --- Output Area Styles --- */
-        .output-group { margin-top: 30px; border-top: 2px solid var(--border-color); padding-top: 20px;}
-        textarea { 
-            width: 100%; height: 350px; 
-            background-color: var(--textarea-bg); 
-            color: var(--textarea-text);
-            border: 1px solid var(--textarea-border);
-            border-radius: 6px;
-            font-family: 'Fira Code', 'Consolas', monospace; 
-            font-size: 14px; padding: 15px; resize: vertical; line-height: 1.6;
-            transition: all 0.3s ease;
-        }
-        textarea:focus { border-color: var(--input-focus); outline: none; }
-        textarea::-webkit-scrollbar { width: 8px; }
-        textarea::-webkit-scrollbar-track { background: var(--textarea-bg); }
-        textarea::-webkit-scrollbar-thumb { background: var(--textarea-border); border-radius: 4px;}
-
-        /* --- Kalkulator Styles --- */
-        .calc-box {
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
-            padding: 15px; border-radius: 6px; margin-top: 10px;
-        }
-        .calc-box p { margin: 8px 0; font-size: 15px; color: var(--text-main); }
-        .calc-box hr { border: 0.5px solid var(--border-color); margin: 10px 0; }
-        
-        .prorata-grid { display: flex; gap: 15px; margin-top: 10px; }
-        .prorata-card {
-            flex: 1; background-color: var(--prorata-bg);
-            padding: 15px; border-radius: 6px; border: 1px solid var(--border-color);
-        }
-        .prorata-card h4 { margin-top: 0; color: var(--text-title); text-align: center;}
-        
-        .total-box {
-            background-color: var(--total-box-bg);
-            padding: 15px; border-radius: 6px; text-align: center;
-            margin-top: 20px; border: 1px solid var(--border-color);
-        }
-        .total-box h3 { margin: 0; color: var(--text-title); font-size: 22px;}
-
-        .text-success { color: var(--success-text); font-weight: bold; }
-        .text-danger { color: var(--danger-text); font-weight: bold; }
-
-        /* --- Running Text --- */
-        .running-text-container {
-            width: 100%; overflow: hidden;
-            background-color: var(--run-text-bg);
-            color: var(--run-text-color);
-            padding: 12px; border-radius: 6px; margin-bottom: 20px;
-            display: flex; align-items: center;
-        }
-        .running-text {
-            display: inline-block; white-space: nowrap;
-            font-weight: 700; font-size: 14px;
-            animation: scrollText 15s linear infinite; 
-        }
-        @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 20px; min-height: 100vh; background-color: var(--bg-main); color: var(--text-main); display: flex; justify-content: center; transition: all 0.3s ease; }
+        .main-card { width: 100%; max-width: 800px; background-color: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        .header-container h2 { margin: 0; color: var(--text-title); font-weight: 800; }
+        .tab-menu { display: flex; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
+        .tab-btn { background-color: var(--tab-bg); color: var(--text-muted); padding: 10px 15px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; flex: 1; min-width: 100px; }
+        .tab-btn.active { background-color: var(--tab-active); color: white; }
+        .tab-konten { display: none; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
+        label { font-weight: 600; margin-bottom: 5px; color: var(--text-muted); font-size: 13px; }
+        select, input, textarea { padding: 12px; background-color: var(--input-bg); color: var(--text-main); border: 2px solid var(--border-color); border-radius: 6px; font-size: 14px; }
+        select:focus, input:focus { border-color: var(--input-focus); outline: none; }
+        .button-group { display: flex; gap: 10px; margin-top: 10px; }
+        button { padding: 12px; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-primary { background-color: var(--btn-primary); }
+        .btn-secondary { background-color: var(--btn-secondary); }
+        .btn-danger { background-color: var(--btn-danger); }
+        textarea.hasil { width: 100%; height: 300px; background-color: var(--textarea-bg); color: var(--textarea-text); font-family: monospace; }
+        .template-list { margin-top: 20px; border: 1px solid var(--border-color); border-radius: 6px; }
+        .template-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--border-color); }
+        .template-item:last-child { border-bottom: none; }
+        .running-text-container { background-color: var(--run-text-bg); color: var(--run-text-color); padding: 10px; border-radius: 6px; margin-bottom: 15px; overflow: hidden; }
+        .running-text { display: inline-block; white-space: nowrap; animation: scroll 15s linear infinite; font-weight: bold; }
+        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .calc-box { background: var(--input-bg); padding: 15px; border-radius: 6px; border: 1px solid var(--border-color); }
+        .prorata-grid { display: flex; gap: 10px; margin-top: 10px; }
+        .prorata-card { flex: 1; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--card-bg); }
+        .cloud-status { font-size: 12px; color: #16a34a; font-weight: bold; display: flex; align-items: center; gap: 5px; }
     </style>
 </head>
 <body onload="initApp()">
 
     <div class="main-card">
-        
         <div class="header-container">
-            <h2>Welcome, </h2>
-            <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
+            <div>
+                <h2>Copas! Master</h2>
+                <span class="cloud-status" id="cloudStatus">☁️ Menyambungkan ke Cloud...</span>
+            </div>
+            <button onclick="toggleTheme()" id="themeBtn" style="background:none; border:none; font-size:20px; cursor:pointer;">🌙</button>
         </div>
 
         <div class="tab-menu">
             <button class="tab-btn active" onclick="bukaTab(event, 'TabKIP')">KIP & DSC</button>
             <button class="tab-btn" onclick="bukaTab(event, 'TabKompulir')">Kompulir</button>
             <button class="tab-btn" onclick="bukaTab(event, 'TabKalkulator')">Kalkulator</button>
+            <button class="tab-btn" onclick="bukaTab(event, 'TabKelola')" style="background-color: #2d3748; color: white;">☁️ Kelola (Cloud)</button>
         </div>
 
         <div id="TabKIP" class="tab-konten" style="display: block;">
-            <h3>Template KIP & DSC</h3>
-
             <div class="form-group">
-                <label for="kategori">Pilih Kategori:</label>
-                <select id="kategori" onchange="sesuaikanForm()">
-                    <option value="template1">1. WSA TEKNIS / Kendala Internet</option>
-                    <option value="template2">2. WSA NON TEKNIS / Percepatan Permintaan</option>
-                    <option value="template3">3. GENERAL</option>
-                    <option value="template4">4. NON WSA PROFILING / Edit SR</option>
-                    <option value="template5">5. NON WSA BILLING</option>
-                    <option value="template6">6. ITSD</option>
-                    <option value="template7">7. Mobile Reguler</option>
-                    <option value="template8">8. Mobile Network</option>
-                    <option value="template9">9. Non Numbering / Kabel Terjuntai</option>
-                </select>
+                <label>Pilih Kategori:</label>
+                <select id="selKIP" onchange="resetKIP()"><option>Memuat dari Cloud...</option></select>
             </div>
-
             <div class="form-group">
-                <label for="inputPabx">Masukkan Data PABX / MSISDN-A:</label>
-                <input type="text" id="inputPabx" placeholder="Contoh: 081234567890">
+                <label>PABX / MSISDN-A:</label>
+                <input type="text" id="inPabx" placeholder="Input data...">
             </div>
-
-            <div class="form-group" id="grupTanggal">
-                <label for="inputTanggal">Pilih Tanggal Kejadian:</label>
-                <input type="date" id="inputTanggal">
+            <div class="form-group">
+                <label>Tanggal Kejadian:</label>
+                <input type="date" id="inTgl">
             </div>
-
             <div class="button-group">
-                <button onclick="buatTemplate()" class="btn-primary">Generate Teks</button>
-                <button onclick="clearForm()" class="btn-secondary">Clear Data</button>
+                <button class="btn-primary" onclick="genKIP()" style="flex:2">Generate</button>
+                <button class="btn-secondary" onclick="clearKIP()">Clear</button>
             </div>
-
-            <div class="output-group">
-                <label for="hasilTeks">Hasil Template:</label>
-                <textarea id="hasilTeks" readonly placeholder="Hasil format teks akan muncul di sini..."></textarea>
-                
-                <div class="button-group">
-                    <button onclick="copyTeks('hasilTeks')" class="btn-secondary">Copy Hasil Teks</button>
-                </div>
+            <div class="form-group" style="margin-top:20px">
+                <textarea id="outKIP" class="hasil" readonly></textarea>
+                <button class="btn-secondary" style="margin-top:10px" onclick="copy('outKIP')">Copy Teks</button>
             </div>
         </div>
 
         <div id="TabKompulir" class="tab-konten">
-            <h3>Format Kompulir</h3>
-            
             <div class="form-group">
-                <label for="kategoriKompulir">Pilih Format Template:</label>
-                <select id="kategoriKompulir">
-                    <option value="1">1. Update NIK</option>
-                    <option value="2">2. Resend Link</option>
-                    <option value="3">3. Adjust AHT</option>
-                    <option value="4">4. Cek Insera</option>
-                    <option value="5">5. Release Call</option>
-                    <option value="6">6. Callback</option>
-                </select>
+                <label>Pilih Format:</label>
+                <select id="selKom"><option>Memuat dari Cloud...</option></select>
             </div>
-
             <div class="button-group">
-                <button onclick="getKompulir()" class="btn-primary">Get Template</button>
-                <button onclick="clearKompulir()" class="btn-secondary">Clear Data</button>
+                <button class="btn-primary" onclick="genKom()" style="flex:2">Get Template</button>
+                <button class="btn-secondary" onclick="clearKom()">Clear</button>
             </div>
-
-            <div class="output-group">
-                <label for="hasilKompulir">Hasil Template:</label>
-                <textarea id="hasilKompulir" readonly placeholder="Hasil format kompulir akan muncul di sini..."></textarea>
-                
-                <div class="button-group">
-                    <button onclick="copyTeks('hasilKompulir')" class="btn-secondary">Copy Hasil Teks</button>
-                </div>
+            <div class="form-group" style="margin-top:20px">
+                <textarea id="outKom" class="hasil" readonly></textarea>
+                <button class="btn-secondary" style="margin-top:10px" onclick="copy('outKom')">Copy Teks</button>
             </div>
         </div>
 
         <div id="TabKalkulator" class="tab-konten">
-            
             <div class="running-text-container">
-                <div class="running-text">
-                    ⚠️ HATI-HATI SAAT PENYAMPAIAN TAGIHAN, GUNAKAN KATA: KISARAN / KURANG LEBIH / KIRA-KIRA / SEKITAR / DSB ⚠️
-                </div>
+                <div class="running-text">⚠️ GUNAKAN KATA KISARAN / KURANG LEBIH SAAT PENYAMPAIAN TAGIHAN ⚠️</div>
             </div>
-
-            <h3>Kalkulator PPN & Admin</h3>
-            <div class="form-group">
-                <label>Harga Paket Dasar (Tanpa Titik/Koma):</label>
-                <input type="number" id="hargaDasar" placeholder="Contoh: 250000" oninput="hitungPPN()">
-            </div>
-            
-            <div class="calc-box">
-                <p>PPN 11% : <span id="outPpn">Rp 0</span></p>
-                <p>Admin : <span id="outAdmin">Rp 5.550</span></p>
+            <h3>PPN & Admin</h3>
+            <input type="number" id="hargaD" placeholder="Harga Dasar..." oninput="calcPPN()" style="width:100%">
+            <div class="calc-box" style="margin-top:10px">
+                <p>PPN 11%: <span id="vPpn">0</span></p>
+                <p>Admin: <span>Rp 5.550</span></p>
                 <hr>
-                <p style="font-size: 18px;">Total Harga : <span id="outTotalHarga" class="text-success">Rp 0</span></p>
+                <p><b>Total: <span id="vTotal" style="color:red">0</span></b></p>
             </div>
-
-            <hr style="margin: 30px 0; border: 1px solid var(--border-color);">
-
-            <h3>Kalkulator Prorata</h3>
+            <h3 style="margin-top:20px">Prorata</h3>
             <div class="prorata-grid">
                 <div class="prorata-card">
-                    <h4>Paket Lama</h4>
-                    <div class="form-group">
-                        <label>Harga (Inc. PPN+Admin):</label>
-                        <input type="number" id="hargaLama" placeholder="Contoh: 283050">
-                    </div>
-                    <div class="form-group">
-                        <label>Dari Tanggal:</label>
-                        <input type="date" id="tglDariLama">
-                    </div>
-                    <div class="form-group">
-                        <label>Sampai Tanggal:</label>
-                        <input type="date" id="tglSampaiLama">
-                    </div>
-                    <p style="text-align: center; margin-bottom: 0;">Prorata: <span id="outProrataLama" class="text-danger">Rp 0</span></p>
+                    <label>Lama (Inc PPN):</label>
+                    <input type="number" id="pL_h">
+                    <input type="date" id="pL_d1"> <input type="date" id="pL_d2">
+                    <p>Hasil: <b id="resL">0</b></p>
                 </div>
-
                 <div class="prorata-card">
-                    <h4>Paket Baru</h4>
-                    <div class="form-group">
-                        <label>Harga (Inc. PPN+Admin):</label>
-                        <input type="number" id="hargaBaru" placeholder="Contoh: 260850">
-                    </div>
-                    <div class="form-group">
-                        <label>Dari Tanggal:</label>
-                        <input type="date" id="tglDariBaru">
-                    </div>
-                    <div class="form-group">
-                        <label>Sampai Tanggal:</label>
-                        <input type="date" id="tglSampaiBaru">
-                    </div>
-                    <p style="text-align: center; margin-bottom: 0;">Prorata: <span id="outProrataBaru" class="text-success">Rp 0</span></p>
+                    <label>Baru (Inc PPN):</label>
+                    <input type="number" id="pB_h">
+                    <input type="date" id="pB_d1"> <input type="date" id="pB_d2">
+                    <p>Hasil: <b id="resB">0</b></p>
                 </div>
             </div>
-
-            <div class="button-group" style="margin-top: 15px;">
-                <button onclick="hitungProrata()" class="btn-primary">Hitung Prorata</button>
-                <button onclick="clearKalkulator()" class="btn-secondary">Clear Data</button>
+            <div class="button-group">
+                <button class="btn-primary" onclick="calcPro()">Hitung Prorata</button>
+                <button class="btn-secondary" onclick="clearCalc()">Clear</button>
             </div>
-
-            <div class="total-box">
-                <h3>Total Tagihan Akhir<br><span id="outTotalProrata">Rp 0</span></h3>
-            </div>
+            <div class="total-box"><h3>Total Tagihan: <span id="resT">Rp 0</span></h3></div>
         </div>
 
+        <div id="TabKelola" class="tab-konten">
+            <h3>Cloud Template Builder</h3>
+            <p style="font-size:12px; color:var(--text-muted)">Template yang dibuat di sini akan <b>otomatis muncul di semua komputer/HP</b> yang membuka web ini. Gunakan <b>[PABX]</b> dan <b>[TANGGAL]</b> untuk auto-fill.</p>
+            
+            <div class="form-group" style="background:var(--input-bg); padding:15px; border-radius:8px">
+                <label>Nama Template:</label>
+                <input type="text" id="mName" placeholder="Contoh: Update NIK">
+                <label>Grup:</label>
+                <select id="mGroup"><option value="KIP">KIP & DSC</option><option value="KOM">Kompulir</option></select>
+                <label>Isi Template:</label>
+                <textarea id="mContent" style="height:100px" placeholder="Tulis format di sini..."></textarea>
+                <button class="btn-primary" style="margin-top:10px" onclick="saveTemplate()">Upload ke Cloud ☁️</button>
+            </div>
+
+            <div class="template-list" id="listManager"></div>
+        </div>
     </div>
 
     <script>
         // ==========================================
-        // FUNGSI INISIALISASI & TEMA DARK MODE
+        // 1. MASUKKAN FIREBASE CONFIG KAMU DI SINI
+        // Copy-paste dari Firebase Console (Tahap 1, Langkah 8)
         // ==========================================
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAmtiWNK1hi5TSIzqieZckDCkmJf8syi1Y",
+  authDomain: "copas-tools.firebaseapp.com",
+  databaseURL: "https://copas-tools-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "copas-tools",
+  storageBucket: "copas-tools.firebasestorage.app",
+  messagingSenderId: "64778462121",
+  appId: "1:64778462121:web:39d58d5978c42a2c829ab8",
+  measurementId: "G-RHF92CLVXV"
+};
+        // ==========================================
+
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let storeKIP = [];
+        let storeKOM = [];
+
+        // --- DATA DEFAULT JIKA DATABASE KOSONG ---
+        const defKIP = [
+            {id:1, n:"1. WSA TEKNIS", c:"[PABX] / CASE\n\nNama: \nCP: \nDetail: "},
+            {id:7, n:"7. Mobile Reguler", c:"MSISDN-A: [PABX]\nTanggal: [TANGGAL]\nDetail Complaint: "}
+        ];
+        const defKOM = [{id:101, n:"1. Update NIK", c:"NIK SIAD: \nNOMOR: \nNama: "}];
+
         function initApp() {
-            sesuaikanForm(); // Panggil fungsi bawaan
+            if(localStorage.getItem('theme')==='dark') toggleTheme(true);
             
-            // Cek local storage untuk tema saat web dimuat
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                document.getElementById('themeToggleBtn').innerText = '☀️';
-            }
+            // MENDENGARKAN DATA DARI CLOUD SECARA REAL-TIME
+            db.ref('templates/kip').on('value', (snapshot) => {
+                storeKIP = snapshot.val() || defKIP; // Jika kosong, pakai default
+                renderDrops(); renderManager();
+                document.getElementById('cloudStatus').innerText = "☁️ Tersambung ke Cloud";
+            });
+
+            db.ref('templates/kom').on('value', (snapshot) => {
+                storeKOM = snapshot.val() || defKOM;
+                renderDrops(); renderManager();
+            });
         }
 
-        function toggleTheme() {
-            const htmlTag = document.documentElement;
-            const btn = document.getElementById('themeToggleBtn');
+        // --- CORE LOGIC ---
+        function renderDrops() {
+            const sKIP = document.getElementById('selKIP');
+            const sKOM = document.getElementById('selKom');
+            sKIP.innerHTML = storeKIP.map(t => `<option value="${t.id}">${t.n}</option>`).join('');
+            sKOM.innerHTML = storeKOM.map(t => `<option value="${t.id}">${t.n}</option>`).join('');
+        }
+
+        function genKIP() {
+            const id = document.getElementById('selKIP').value;
+            const p = document.getElementById('inPabx').value || "[KOSONG]";
+            const tRaw = document.getElementById('inTgl').value;
+            const t = tRaw ? tRaw.split('-').reverse().join('-') : "[TANGGAL KOSONG]";
             
-            if (htmlTag.getAttribute('data-theme') === 'dark') {
-                htmlTag.removeAttribute('data-theme');
-                localStorage.setItem('theme', 'light');
-                btn.innerText = '🌙';
+            const temp = storeKIP.find(x => x.id == id);
+            if(!temp) return;
+            let res = temp.c.replace(/\[PABX\]/g, p).replace(/\[TANGGAL\]/g, t);
+            document.getElementById('outKIP').value = res;
+        }
+
+        function genKom() {
+            const id = document.getElementById('selKom').value;
+            const temp = storeKOM.find(x => x.id == id);
+            if(temp) document.getElementById('outKom').value = temp.c;
+        }
+
+        // --- CLOUD BUILDER LOGIC ---
+        function saveTemplate() {
+            const n = document.getElementById('mName').value;
+            const g = document.getElementById('mGroup').value;
+            const c = document.getElementById('mContent').value;
+            if(!n || !c) return alert("Isi nama dan konten!");
+
+            const newT = { id: Date.now(), n: n, c: c };
+            
+            // Simpan ke Firebase (Push)
+            if(g === 'KIP') {
+                storeKIP.push(newT);
+                db.ref('templates/kip').set(storeKIP);
             } else {
-                htmlTag.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-                btn.innerText = '☀️';
+                storeKOM.push(newT);
+                db.ref('templates/kom').set(storeKOM);
             }
+            
+            alert("Berhasil diupload ke Cloud!");
+            document.getElementById('mName').value = ''; document.getElementById('mContent').value = '';
         }
 
-        // ==========================================
-        // FUNGSI TAB NAVIGASI
-        // ==========================================
-        function bukaTab(evt, namaTab) {
-            let i, tabkonten, tabbtn;
-            tabkonten = document.getElementsByClassName("tab-konten");
-            for (i = 0; i < tabkonten.length; i++) { tabkonten[i].style.display = "none"; }
-            tabbtn = document.getElementsByClassName("tab-btn");
-            for (i = 0; i < tabbtn.length; i++) { tabbtn[i].className = tabbtn[i].className.replace(" active", ""); }
-            document.getElementById(namaTab).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
-
-        // ==========================================
-        // FUNGSI TAB 1: KIP & DSC
-        // ==========================================
-        function sesuaikanForm() {
-            const kategori = document.getElementById('kategori').value;
-            const grupTanggal = document.getElementById('grupTanggal');
-            const inputPabx = document.getElementById('inputPabx');
-            const inputTanggal = document.getElementById('inputTanggal');
-
-            inputPabx.value = '';
-            inputTanggal.value = '';
-            document.getElementById('hasilTeks').value = '';
-
-            const butuhTanggal = ['template2', 'template3', 'template5', 'template6', 'template7', 'template8'];
-            if (butuhTanggal.includes(kategori)) {
-                grupTanggal.style.display = 'flex'; 
+        function delTemp(id, g) {
+            if(!confirm("Hapus template ini dari Cloud? (Akan hilang di semua perangkat)")) return;
+            
+            if(g === 'KIP') {
+                storeKIP = storeKIP.filter(x => x.id != id);
+                db.ref('templates/kip').set(storeKIP);
             } else {
-                grupTanggal.style.display = 'none'; 
+                storeKOM = storeKOM.filter(x => x.id != id);
+                db.ref('templates/kom').set(storeKOM);
             }
-            inputPabx.focus();
         }
 
-        function buatTemplate() {
-            const kategori = document.getElementById('kategori').value;
-            const pabx = document.getElementById('inputPabx').value;
-            const tanggalRaw = document.getElementById('inputTanggal').value;
-
-            if(!pabx) {
-                alert("Harap isi data PABX / MSISDN-A terlebih dahulu!");
-                document.getElementById('inputPabx').focus();
-                return;
-            }
-
-            const butuhTanggal = ['template2', 'template3', 'template5', 'template6', 'template7', 'template8'];
-            if (butuhTanggal.includes(kategori) && !tanggalRaw) {
-                alert("Harap isi Tanggal Kejadian terlebih dahulu!");
-                document.getElementById('inputTanggal').focus();
-                return;
-            }
-
-            let tanggalFormatted = "";
-            if (tanggalRaw) {
-                const parts = tanggalRaw.split('-');
-                tanggalFormatted = `${parts[2]}-${parts[1]}-${parts[0]}`;
-            }
-
-            let template = "";
-
-            if (kategori === 'template1') {
-                template = `${pabx} / CASE\n\n${pabx} / NoIH / Case / HVC\nNama Pelanggan : \nCP : \nDetail case : \nLapul/Gaul : \nStatus Nomor di DSC : \nSub Status : \nStatus Pembayaran : \nType ONT : \nCapt lightshoot : \nKATEGORI : `;
-            } else if (kategori === 'template2') {
-                template = `${pabx} / CASE\n\n${pabx} / NoIH / Case / HVC\nNama Pelanggan : \nCP : \nEmail : \nDetail case : \nTgl Kejadian : ${tanggalFormatted}\nOrder ID permintaan : \nStatus Order : \nSolusi yang diberikan : \nLapul/Gaul : \nCapt lightshoot : \nKATEGORI : `;
-            } else if (kategori === 'template3') {
-                template = `${pabx} / CASE\n\n${pabx} / NoIH / Case / HVC\nNama Pelanggan : \nCP : \nEmail : \nOrderID : \nStatus order : \nDetail case : \nTanggal kejadian : ${tanggalFormatted}\nSolusi yang diberikan : \nLapul / Gaul : \nCapt lightshoot : \nKATEGORI : \nK-Kontak : `;
-            } else if (kategori === 'template4') {
-                template = `${pabx} / CASE\n\n${pabx} / NoIH / Case / HVC\nNama Pelanggan : \nNIK : \nTTL : \nCP : \nEmail : \nDetail case : \nSolusi yang diberikan : \nCapt lightshoot : \nKATEGORI : `;
-            } else if (kategori === 'template5') {
-                template = `${pabx} / CASE\n\n${pabx} / NoIH / Case / HVC\nNama Pelanggan : \nCP : \nEmail : \nDetail case : \nOrder ID permintaan : \nFA ID : \nTanggal kejadian : ${tanggalFormatted}\nSolusi yang diberikan : \nLapul/Gaul : \nStatus Nomor di DSC : \nSub Status : \nStatus Pembayaran : \nCapt lightshoot FA : \nKATEGORI : `;
-            } else if (kategori === 'template6') {
-                template = `${pabx} / CASE\n\n${pabx} / NoIH / Case / HVC\nNomor IndiHome / Nomor Internet : \nNama Pelanggan : \nNIK Pelanggan : \nNo. HP Pelanggan : \nEmail Pelanggan : \nOrder ID : \nTanggal Kejadian: ${tanggalFormatted}\nKendala/inti gangguan : \nCapture Error : \nDear rekan IT Service Desk mohon bantu`;
-            } else if (kategori === 'template7') {
-                template = `REG/INT/CORP SILVER/DIAMOND/PLATINUM\nNama Customer : \nMSISDN-A Yang Menghubungi : ${pabx}\nMSISDN-B Yang Bermasalah : \nTanggal / Jam Kejadian : ${tanggalFormatted}\nLokasi Pelanggan (alamat) : \nSegmentasi Kartu : \nSIM Capability : \nCustomer Tier Pelanggan : \nCase Owner : Call Center Semarang\nDetail Complaint : \nAdditional Information : \nSolusi yang telah diberikan : `;
-            } else if (kategori === 'template8') {
-                template = `REG/INT/CORP SILVER/DIAMOND/PLATINUM\nNama Customer : \nMSISDN-A Yang Menghubungi : ${pabx}\nMSISDN-B Yang Bermasalah : \nTanggal / Jam Kejadian : ${tanggalFormatted}\nLokasi Pelanggan (alamat) : \nKoordinat customer : \nSegmentasi Kartu : \nSIM Capability : \nCustomer Tier Pelanggan : \nCase Owner : Call Center Semarang\nDetail Complaint : \nAdditional Information : \nCapture bukti pelanggan : \nCapture CCA : \nHasil analisa CCA : \nPossible root Cause : \nRemarks : \nSuggestion : \nSolusi yang telah diberikan : `;
-            } else if (kategori === 'template9') {
-                template = `${pabx} / CASE\n\nPelapor : \nEmail : \nCP : \n#LocationIncident\nProvinsi : \nKota / Kab : \nKecamatan : \nKelurahan : \nWitel : \nNama Jalan : \nPatokan : \nDeskripsi : `;
-            }
-
-            document.getElementById('hasilTeks').value = template;
+        function renderManager() {
+            const container = document.getElementById('listManager');
+            let h = `<div style="padding:10px; font-weight:bold; background:var(--tab-bg)">Daftar Template di Cloud</div>`;
+            if(storeKIP) storeKIP.forEach(t => h += `<div class="template-item"><span>[KIP] ${t.n}</span><button class="btn-danger" style="padding:5px 10px" onclick="delTemp(${t.id},'KIP')">X</button></div>`);
+            if(storeKOM) storeKOM.forEach(t => h += `<div class="template-item"><span>[KOM] ${t.n}</span><button class="btn-danger" style="padding:5px 10px" onclick="delTemp(${t.id},'KOM')">X</button></div>`);
+            container.innerHTML = h;
         }
 
-        function clearForm() {
-            document.getElementById('inputPabx').value = '';
-            document.getElementById('inputTanggal').value = '';
-            document.getElementById('hasilTeks').value = '';
-            document.getElementById('inputPabx').focus();
+        // --- UI & UTILS ---
+        function bukaTab(e, n) {
+            const content = document.getElementsByClassName("tab-konten");
+            for (let i = 0; i < content.length; i++) content[i].style.display = "none";
+            const btns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < btns.length; i++) btns[i].classList.remove("active");
+            document.getElementById(n).style.display = "block";
+            e.currentTarget.classList.add("active");
         }
 
-        // ==========================================
-        // FUNGSI TAB 2: FORMAT KOMPULIR
-        // ==========================================
-        const dataKompulir = {
-            "1": "NIK SIAD : \nAninumber : \nNOMOR PELANGGAN : \nNama Pelanggan : \nTempat Lahir : \nTanggal Lahir : \nNomor Handphone di DSC : \nEmail : \nNIK Yang Tertera di Kontrak : \nNIK Yang Sesuai KTP : \nKETERANGAN PERMINTAAN ORDER PELANGGAN (KHUSUS REQ EDIT PROFILE) : ",
-            "2": "SUBJEK\nPABX : \nNAMA : \nJASTEL : \nEMAIL : \nCP : \nORDER ID : \nTGL TRANSAKSI : ",
-            "3": "Nama Agent : \nLogin : \nPABX : \nNo Indihome : \nJam Call : \nCase : \nDurasi : \nEvidence : ",
-            "4": "No Jastel : \nID Tiket : \nCreated Date : ",
-            "5": "Subjek : \nPABX : \nNo Jastel : \nReason : ",
-            "6": "Tgl / LoginAgent / ExtAvaya / Case / PABX / Jastel"
-        };
-
-        function getKompulir() {
-            let pilihan = document.getElementById("kategoriKompulir").value;
-            document.getElementById("hasilKompulir").value = dataKompulir[pilihan];
+        function toggleTheme(init = false) {
+            const h = document.documentElement;
+            const isDark = h.getAttribute('data-theme') === 'dark';
+            if(!init) {
+                if(isDark) { h.removeAttribute('data-theme'); localStorage.setItem('theme','light'); }
+                else { h.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark'); }
+            } else if(localStorage.getItem('theme')==='dark') h.setAttribute('data-theme','dark');
+            document.getElementById('themeBtn').innerText = h.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
         }
 
-        function clearKompulir() {
-            document.getElementById('kategoriKompulir').selectedIndex = 0;
-            document.getElementById('hasilKompulir').value = '';
+        function copy(id) {
+            const t = document.getElementById(id); if(!t.value) return;
+            t.select(); navigator.clipboard.writeText(t.value); alert("Dicopy!");
         }
 
-        // ==========================================
-        // FUNGSI TAB 3: KALKULATOR & PRORATA
-        // ==========================================
-        const formatRp = (angka) => {
-            return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(angka);
-        };
+        function resetKIP() { document.getElementById('inPabx').value=''; document.getElementById('inTgl').value=''; }
 
-        function hitungPPN() {
-            let dasar = parseFloat(document.getElementById("hargaDasar").value) || 0;
-            if (dasar === 0) {
-                document.getElementById("outPpn").innerText = "Rp 0";
-                document.getElementById("outAdmin").innerText = "Rp 5.550";
-                document.getElementById("outTotalHarga").innerText = "Rp 0";
-                return;
-            }
-            let ppn = Math.round(dasar * 0.11);
-            let admin = 5550; 
-            let total = dasar + ppn + admin;
-
-            document.getElementById("outPpn").innerText = formatRp(ppn);
-            document.getElementById("outAdmin").innerText = formatRp(admin);
-            document.getElementById("outTotalHarga").innerText = formatRp(total);
+        // --- KALKULATOR LOGIC ---
+        function calcPPN() {
+            const d = parseFloat(document.getElementById('hargaD').value) || 0;
+            const p = Math.round(d * 0.11);
+            document.getElementById('vPpn').innerText = "Rp " + p.toLocaleString();
+            document.getElementById('vTotal').innerText = "Rp " + (d + p + 5550).toLocaleString();
         }
 
-        function hitungProrata() {
-            function prosesProrata(idHarga, idDari, idSampai) {
-                let harga = parseFloat(document.getElementById(idHarga).value) || 0;
-                let dari = document.getElementById(idDari).value;
-                let sampai = document.getElementById(idSampai).value;
-
-                if (!dari || !sampai || harga === 0) return 0;
-
-                let d1 = new Date(dari);
-                let d2 = new Date(sampai);
-                
-                let selisihHari = Math.round((d2 - d1) / (1000 * 3600 * 24)) + 1;
-                if (selisihHari <= 0) return 0;
-
-                let hariDalamBulan = new Date(d1.getFullYear(), d1.getMonth() + 1, 0).getDate();
-                return Math.round((harga / hariDalamBulan) * selisihHari);
-            }
-
-            let prorataLama = prosesProrata("hargaLama", "tglDariLama", "tglSampaiLama");
-            let prorataBaru = prosesProrata("hargaBaru", "tglDariBaru", "tglSampaiBaru");
-            let totalProrata = prorataLama + prorataBaru;
-
-            document.getElementById("outProrataLama").innerText = formatRp(prorataLama);
-            document.getElementById("outProrataBaru").innerText = formatRp(prorataBaru);
-            document.getElementById("outTotalProrata").innerText = formatRp(totalProrata);
+        function calcPro() {
+            const f = (h, d1, d2) => {
+                if(!h || !d1 || !d2) return 0;
+                const s = Math.round((new Date(d2) - new Date(d1))/(1000*3600*24))+1;
+                const m = new Date(new Date(d1).getFullYear(), new Date(d1).getMonth()+1, 0).getDate();
+                return Math.round((h/m)*s);
+            };
+            const l = f(document.getElementById('pL_h').value, document.getElementById('pL_d1').value, document.getElementById('pL_d2').value);
+            const b = f(document.getElementById('pB_h').value, document.getElementById('pB_d1').value, document.getElementById('pB_d2').value);
+            document.getElementById('resL').innerText = "Rp " + l.toLocaleString();
+            document.getElementById('resB').innerText = "Rp " + b.toLocaleString();
+            document.getElementById('resT').innerText = "Rp " + (l+b).toLocaleString();
         }
 
-        function clearKalkulator() {
-            document.getElementById('hargaDasar').value = '';
-            document.getElementById("outPpn").innerText = "Rp 0";
-            document.getElementById("outAdmin").innerText = "Rp 5.550";
-            document.getElementById("outTotalHarga").innerText = "Rp 0";
-
-            document.getElementById('hargaLama').value = '';
-            document.getElementById('tglDariLama').value = '';
-            document.getElementById('tglSampaiLama').value = '';
-            document.getElementById("outProrataLama").innerText = "Rp 0";
-
-            document.getElementById('hargaBaru').value = '';
-            document.getElementById('tglDariBaru').value = '';
-            document.getElementById('tglSampaiBaru').value = '';
-            document.getElementById("outProrataBaru").innerText = "Rp 0";
-
-            document.getElementById("outTotalProrata").innerText = "Rp 0";
-        }
-
-        // ==========================================
-        // FUNGSI GLOBAL: COPY TEKS
-        // ==========================================
-        function copyTeks(elementId) {
-            const teks = document.getElementById(elementId);
-            if(!teks.value) {
-                alert("Belum ada teks yang bisa dicopy!");
-                return;
-            }
-            teks.select();
-            teks.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(teks.value)
-                .then(() => alert("Teks berhasil disalin!"))
-                .catch(err => alert("Gagal menyalin teks."));
+        function clearKIP() { document.getElementById('inPabx').value=''; document.getElementById('outKIP').value=''; }
+        function clearKom() { document.getElementById('outKom').value=''; }
+        function clearCalc() { 
+            document.getElementById('hargaD').value=''; calcPPN();
+            document.getElementById('pL_h').value=''; document.getElementById('pB_h').value='';
+            document.getElementById('resT').innerText='Rp 0';
         }
     </script>
-
 </body>
 </html>
