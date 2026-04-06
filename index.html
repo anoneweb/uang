@@ -3,61 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Copas!</title>
+    <title>Copas! Tools Laporan</title>
     <style>
-        /* --- Reset & Typography Dasar --- */
-        * {
-            box-sizing: border-box;
+        /* --- CSS Variables (Sistem Tema Terang & Gelap) --- */
+        :root {
+            --bg-main: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-title: #EC2028; /* Merah Khas Telkomsel */
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #cbd5e0;
+            --input-bg: #f8fafc;
+            --input-focus: #EC2028;
+            
+            --btn-primary: #EC2028;
+            --btn-primary-hover: #c81b22;
+            --btn-primary-shadow: rgba(236, 32, 40, 0.3);
+            
+            --btn-secondary: #334155;
+            --btn-secondary-hover: #1e293b;
+            --btn-secondary-shadow: rgba(51, 65, 85, 0.3);
+            
+            --tab-bg: #e2e8f0;
+            --tab-active: #EC2028;
+            --tab-text: #475569;
+            --tab-active-text: #ffffff;
+            
+            --textarea-bg: #1e293b;
+            --textarea-text: #f8fafc;
+            --textarea-border: #475569;
+            
+            --prorata-bg: #ffffff;
+            --run-text-bg: #fef08a;
+            --run-text-color: #854d0e;
+            --total-box-bg: #f1f5f9;
+            
+            --success-text: #16a34a;
+            --danger-text: #dc2626;
         }
+
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --card-bg: #1e293b;
+            --text-title: #f87171; /* Merah lebih terang untuk background gelap */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --input-bg: #0f172a;
+            --input-focus: #f87171;
+            
+            --btn-primary: #dc2626;
+            --btn-primary-hover: #b91c1c;
+            --btn-primary-shadow: rgba(220, 38, 38, 0.3);
+            
+            --btn-secondary: #475569;
+            --btn-secondary-hover: #334155;
+            --btn-secondary-shadow: rgba(71, 85, 105, 0.3);
+            
+            --tab-bg: #0f172a;
+            --tab-active: #dc2626;
+            --tab-text: #cbd5e0;
+            --tab-active-text: #ffffff;
+            
+            --textarea-bg: #000000;
+            --textarea-text: #4ade80; /* Teks hijau bergaya terminal untuk dark mode */
+            --textarea-border: #334155;
+            
+            --prorata-bg: #0f172a;
+            --run-text-bg: #422006;
+            --run-text-color: #fde047;
+            --total-box-bg: #334155;
+            
+            --success-text: #4ade80;
+            --danger-text: #f87171;
+        }
+
+        /* --- Reset & Typography Dasar --- */
+        * { box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 20px;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: var(--bg-main);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Ubah agar lebih enak di-scroll */
+            transition: background-color 0.3s ease;
         }
 
         /* --- Container Utama (Kartu) --- */
         .main-card {
             width: 100%;
             max-width: 750px;
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background-color: var(--card-bg);
             padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin-top: 2vh;
         }
 
-        h2, h3 { 
-            text-align: center; 
-            color: #333; 
-            margin-bottom: 20px; 
-            font-weight: 700;
+        /* --- Header & Theme Toggle --- */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+        .header-container h2 {
+            margin: 0;
+            color: var(--text-title);
+            font-weight: 800;
             letter-spacing: -0.5px;
         }
+        .theme-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+        .theme-btn:hover { transform: scale(1.1); }
+
+        h3 { color: var(--text-main); margin-bottom: 20px; font-weight: 700; }
         
         /* --- Tab Menu Styles --- */
         .tab-menu {
             display: flex;
             gap: 10px;
             margin-bottom: 25px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 15px;
         }
         .tab-btn {
-            background-color: #f1f3f9;
-            color: #555;
-            box-shadow: none;
-            border-radius: 8px;
+            background-color: var(--tab-bg);
+            color: var(--tab-text);
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            flex: 1;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
         .tab-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            transform: translateY(-2px);
+            background-color: var(--tab-active);
+            color: var(--tab-active-text);
+            box-shadow: 0 4px 15px var(--btn-primary-shadow);
         }
         .tab-konten {
             display: none;
@@ -69,163 +164,116 @@
         }
 
         /* --- Form Styles --- */
-        .form-group { 
-            display: flex; 
-            flex-direction: column; 
-            margin-bottom: 20px; 
-        }
-        
-        label { 
-            font-weight: 600; 
-            margin-bottom: 8px; 
-            color: #555; 
-            font-size: 14px;
-            letter-spacing: 0.5px;
-        }
-
+        .form-group { display: flex; flex-direction: column; margin-bottom: 20px; }
+        label { font-weight: 600; margin-bottom: 8px; color: var(--text-muted); font-size: 14px; }
         select, input[type="text"], input[type="date"], input[type="number"] {
             padding: 12px 15px;
-            border: 2px solid transparent; 
-            background-color: #f1f3f9; 
-            border-radius: 8px;
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
             font-size: 15px;
             width: 100%;
-            transition: all 0.3s ease; 
+            transition: all 0.3s ease;
             font-family: inherit;
         }
-
-/* Untuk input form dan dropdown (tetap berubah putih) */
-select:focus, input:focus {
-    background-color: #fff;
-    border-color: #667eea; 
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-/* Khusus untuk textarea (tetap gelap saat diklik) */
-textarea:focus {
-    background-color: #2d3748; /* Tetap gelap */
-    border-color: #667eea; /* Border berubah ungu/biru */
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-}
+        select:focus, input:focus {
+            background-color: var(--card-bg);
+            border-color: var(--input-focus);
+            outline: none;
+        }
         
         /* --- Button Styles --- */
-        .button-group { 
-            display: flex; 
-            gap: 12px; 
-            margin-top: 15px; 
-        }
+        .button-group { display: flex; gap: 12px; margin-top: 15px; }
         button {
-            flex: 1; 
-            padding: 14px; 
-            color: white; 
-            border: none;
-            border-radius: 8px; 
-            font-size: 16px; 
-            cursor: pointer; 
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            flex: 1; padding: 14px; color: white; border: none; border-radius: 6px; 
+            font-size: 15px; cursor: pointer; font-weight: 600; letter-spacing: 0.5px;
+            transition: all 0.2s;
         }
         button:active { transform: translateY(2px); }
-
-        .btn-generate { background: linear-gradient(to right, #28a745, #20c997); box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); }
-        .btn-clear { background: linear-gradient(to right, #dc3545, #f86c6b); box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3); }
-        .btn-copy { background: linear-gradient(to right, #007bff, #6610f2); box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3); }
+        
+        /* Warna Tombol Baru */
+        .btn-primary { background-color: var(--btn-primary); box-shadow: 0 4px 15px var(--btn-primary-shadow); }
+        .btn-primary:hover { background-color: var(--btn-primary-hover); }
+        .btn-secondary { background-color: var(--btn-secondary); box-shadow: 0 4px 15px var(--btn-secondary-shadow); }
+        .btn-secondary:hover { background-color: var(--btn-secondary-hover); }
 
         /* --- Output Area Styles --- */
-        .output-group { margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;}
+        .output-group { margin-top: 30px; border-top: 2px solid var(--border-color); padding-top: 20px;}
         textarea { 
-            width: 100%;
-            height: 350px; 
-            background-color: #2d3748; 
-            color: #e2e8f0;
+            width: 100%; height: 350px; 
+            background-color: var(--textarea-bg); 
+            color: var(--textarea-text);
+            border: 1px solid var(--textarea-border);
+            border-radius: 6px;
             font-family: 'Fira Code', 'Consolas', monospace; 
-            font-size: 14px; 
-            padding: 15px;
-            border: 1px solid #4a5568;
-            border-radius: 8px;
-            resize: vertical;
-            line-height: 1.6;
+            font-size: 14px; padding: 15px; resize: vertical; line-height: 1.6;
+            transition: all 0.3s ease;
         }
+        textarea:focus { border-color: var(--input-focus); outline: none; }
         textarea::-webkit-scrollbar { width: 8px; }
-        textarea::-webkit-scrollbar-track { background: #2d3748; }
-        textarea::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px;}
+        textarea::-webkit-scrollbar-track { background: var(--textarea-bg); }
+        textarea::-webkit-scrollbar-thumb { background: var(--textarea-border); border-radius: 4px;}
 
         /* --- Kalkulator Styles --- */
         .calc-box {
-            background: #f1f3f9;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            border: 1px solid #e2e8f0;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            padding: 15px; border-radius: 6px; margin-top: 10px;
         }
-        .calc-box p { margin: 8px 0; font-size: 15px; color: #4a5568;}
-        .calc-box strong { color: #2d3748; }
+        .calc-box p { margin: 8px 0; font-size: 15px; color: var(--text-main); }
+        .calc-box hr { border: 0.5px solid var(--border-color); margin: 10px 0; }
         
-        .prorata-grid {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-        }
+        .prorata-grid { display: flex; gap: 15px; margin-top: 10px; }
         .prorata-card {
-            flex: 1;
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #cbd5e0;
+            flex: 1; background-color: var(--prorata-bg);
+            padding: 15px; border-radius: 6px; border: 1px solid var(--border-color);
         }
-        .prorata-card h4 { margin-top: 0; color: #667eea; text-align: center;}
+        .prorata-card h4 { margin-top: 0; color: var(--text-title); text-align: center;}
+        
         .total-box {
-            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            margin-top: 20px;
-            color: #155724;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+            background-color: var(--total-box-bg);
+            padding: 15px; border-radius: 6px; text-align: center;
+            margin-top: 20px; border: 1px solid var(--border-color);
         }
-        .total-box h3 { margin: 0; color: #155724; }
-/* --- Running Text Kalkulator --- */
+        .total-box h3 { margin: 0; color: var(--text-title); font-size: 22px;}
+
+        .text-success { color: var(--success-text); font-weight: bold; }
+        .text-danger { color: var(--danger-text); font-weight: bold; }
+
+        /* --- Running Text --- */
         .running-text-container {
-            width: 100%;
-            overflow: hidden;
-            background-color: #fff3cd; /* Warna latar kuning peringatan */
-            color: #856404; /* Warna teks gelap agar kontras */
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ffeeba;
-            display: flex;
-            align-items: center;
+            width: 100%; overflow: hidden;
+            background-color: var(--run-text-bg);
+            color: var(--run-text-color);
+            padding: 12px; border-radius: 6px; margin-bottom: 20px;
+            display: flex; align-items: center;
         }
         .running-text {
-            display: inline-block;
-            white-space: nowrap;
-            font-weight: 600;
-            font-size: 14px;
-            /* Atur kecepatan di sini (15s = 15 detik dari kanan ke kiri) */
+            display: inline-block; white-space: nowrap;
+            font-weight: 700; font-size: 14px;
             animation: scrollText 15s linear infinite; 
         }
-        @keyframes scrollText {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
+        @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     </style>
 </head>
-<body onload="sesuaikanForm()">
+<body onload="initApp()">
 
     <div class="main-card">
         
+        <div class="header-container">
+            <h2>Copas! Tools</h2>
+            <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
+        </div>
+
         <div class="tab-menu">
             <button class="tab-btn active" onclick="bukaTab(event, 'TabKIP')">KIP & DSC</button>
-            <button class="tab-btn" onclick="bukaTab(event, 'TabKompulir')">Format Kompulir</button>
+            <button class="tab-btn" onclick="bukaTab(event, 'TabKompulir')">Kompulir</button>
             <button class="tab-btn" onclick="bukaTab(event, 'TabKalkulator')">Kalkulator</button>
         </div>
 
         <div id="TabKIP" class="tab-konten" style="display: block;">
-            <h2>Template KIP & DSC</h2>
+            <h3>Template KIP & DSC</h3>
 
             <div class="form-group">
                 <label for="kategori">Pilih Kategori:</label>
@@ -244,7 +292,7 @@ textarea:focus {
 
             <div class="form-group">
                 <label for="inputPabx">Masukkan Data PABX / MSISDN-A:</label>
-                <input type="text" id="inputPabx" placeholder="Ketik data PABX / MSISDN-A di sini">
+                <input type="text" id="inputPabx" placeholder="Contoh: 081234567890">
             </div>
 
             <div class="form-group" id="grupTanggal">
@@ -253,22 +301,22 @@ textarea:focus {
             </div>
 
             <div class="button-group">
-                <button onclick="buatTemplate()" class="btn-generate">Generate Teks</button>
-                <button onclick="clearForm()" class="btn-clear">Clear Data</button>
+                <button onclick="buatTemplate()" class="btn-primary">Generate Teks</button>
+                <button onclick="clearForm()" class="btn-secondary">Clear Data</button>
             </div>
 
             <div class="output-group">
                 <label for="hasilTeks">Hasil Template:</label>
-                <textarea id="hasilTeks" readonly placeholder="Hasil format teks akan muncul di sini"></textarea>
+                <textarea id="hasilTeks" readonly placeholder="Hasil format teks akan muncul di sini..."></textarea>
                 
                 <div class="button-group">
-                    <button onclick="copyTeks('hasilTeks')" class="btn-copy">Copy Hasil Teks</button>
+                    <button onclick="copyTeks('hasilTeks')" class="btn-secondary">Copy Hasil Teks</button>
                 </div>
             </div>
         </div>
 
         <div id="TabKompulir" class="tab-konten">
-            <h2>Format Kompulir</h2>
+            <h3>Format Kompulir</h3>
             
             <div class="form-group">
                 <label for="kategoriKompulir">Pilih Format Template:</label>
@@ -283,44 +331,44 @@ textarea:focus {
             </div>
 
             <div class="button-group">
-                <button onclick="getKompulir()" class="btn-generate">Get Template</button>
-                <button onclick="clearKompulir()" class="btn-clear">Clear Data</button>
+                <button onclick="getKompulir()" class="btn-primary">Get Template</button>
+                <button onclick="clearKompulir()" class="btn-secondary">Clear Data</button>
             </div>
 
             <div class="output-group">
                 <label for="hasilKompulir">Hasil Template:</label>
-                <textarea id="hasilKompulir" readonly placeholder="Hasil format kompulir akan muncul di sini"></textarea>
+                <textarea id="hasilKompulir" readonly placeholder="Hasil format kompulir akan muncul di sini..."></textarea>
                 
                 <div class="button-group">
-                    <button onclick="copyTeks('hasilKompulir')" class="btn-copy">Copy Hasil Teks</button>
+                    <button onclick="copyTeks('hasilKompulir')" class="btn-secondary">Copy Hasil Teks</button>
                 </div>
             </div>
         </div>
 
-<div id="TabKalkulator" class="tab-konten">
+        <div id="TabKalkulator" class="tab-konten">
             
             <div class="running-text-container">
                 <div class="running-text">
-                    ⚠️ HATI-HATI SAAT PENYAMPAIAN TAGIHAN, GUNAKAN KATA KISARAN / KURANG LEBIH / KIRA-KIRA / DSB ⚠️
+                    ⚠️ HATI-HATI SAAT PENYAMPAIAN TAGIHAN, GUNAKAN KATA: KISARAN / KURANG LEBIH / KIRA-KIRA ⚠️
                 </div>
             </div>
 
-            <h2>Kalkulator PPN & Admin</h2>
+            <h3>Kalkulator PPN & Admin</h3>
             <div class="form-group">
                 <label>Harga Paket Dasar (Tanpa Titik/Koma):</label>
                 <input type="number" id="hargaDasar" placeholder="Contoh: 250000" oninput="hitungPPN()">
             </div>
             
             <div class="calc-box">
-                <p>PPN 11% : <strong id="outPpn">Rp 0</strong></p>
-                <p>Admin : <strong id="outAdmin">Rp 5.550</strong></p>
-                <hr style="border: 0.5px solid #cbd5e0; margin: 10px 0;">
-                <p style="font-size: 18px;">Total Harga : <strong id="outTotalHarga" style="color: #28a745;">Rp 0</strong></p>
+                <p>PPN 11% : <span id="outPpn">Rp 0</span></p>
+                <p>Admin : <span id="outAdmin">Rp 5.550</span></p>
+                <hr>
+                <p style="font-size: 18px;">Total Harga : <span id="outTotalHarga" class="text-success">Rp 0</span></p>
             </div>
 
-            <hr style="margin: 30px 0; border: 1px solid #e2e8f0;">
+            <hr style="margin: 30px 0; border: 1px solid var(--border-color);">
 
-            <h2>Kalkulator Prorata</h2>
+            <h3>Kalkulator Prorata</h3>
             <div class="prorata-grid">
                 <div class="prorata-card">
                     <h4>Paket Lama</h4>
@@ -336,7 +384,7 @@ textarea:focus {
                         <label>Sampai Tanggal:</label>
                         <input type="date" id="tglSampaiLama">
                     </div>
-                    <p style="text-align: center; margin-bottom: 0;">Prorata: <strong id="outProrataLama" style="color: #dc3545;">Rp 0</strong></p>
+                    <p style="text-align: center; margin-bottom: 0;">Prorata: <span id="outProrataLama" class="text-danger">Rp 0</span></p>
                 </div>
 
                 <div class="prorata-card">
@@ -353,17 +401,17 @@ textarea:focus {
                         <label>Sampai Tanggal:</label>
                         <input type="date" id="tglSampaiBaru">
                     </div>
-                    <p style="text-align: center; margin-bottom: 0;">Prorata: <strong id="outProrataBaru" style="color: #007bff;">Rp 0</strong></p>
+                    <p style="text-align: center; margin-bottom: 0;">Prorata: <span id="outProrataBaru" class="text-success">Rp 0</span></p>
                 </div>
             </div>
 
             <div class="button-group" style="margin-top: 15px;">
-                <button onclick="hitungProrata()" class="btn-copy">Hitung Prorata</button>
-                <button onclick="clearKalkulator()" class="btn-clear">Clear Data</button>
+                <button onclick="hitungProrata()" class="btn-primary">Hitung Prorata</button>
+                <button onclick="clearKalkulator()" class="btn-secondary">Clear Data</button>
             </div>
 
             <div class="total-box">
-                <h3>Total Tagihan Akhir: <br><span id="outTotalProrata">Rp 0</span></h3>
+                <h3>Total Tagihan Akhir<br><span id="outTotalProrata">Rp 0</span></h3>
             </div>
         </div>
 
@@ -371,18 +419,43 @@ textarea:focus {
 
     <script>
         // ==========================================
+        // FUNGSI INISIALISASI & TEMA DARK MODE
+        // ==========================================
+        function initApp() {
+            sesuaikanForm(); // Panggil fungsi bawaan
+            
+            // Cek local storage untuk tema saat web dimuat
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('themeToggleBtn').innerText = '☀️';
+            }
+        }
+
+        function toggleTheme() {
+            const htmlTag = document.documentElement;
+            const btn = document.getElementById('themeToggleBtn');
+            
+            if (htmlTag.getAttribute('data-theme') === 'dark') {
+                htmlTag.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                btn.innerText = '🌙';
+            } else {
+                htmlTag.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                btn.innerText = '☀️';
+            }
+        }
+
+        // ==========================================
         // FUNGSI TAB NAVIGASI
         // ==========================================
         function bukaTab(evt, namaTab) {
             let i, tabkonten, tabbtn;
             tabkonten = document.getElementsByClassName("tab-konten");
-            for (i = 0; i < tabkonten.length; i++) {
-                tabkonten[i].style.display = "none";
-            }
+            for (i = 0; i < tabkonten.length; i++) { tabkonten[i].style.display = "none"; }
             tabbtn = document.getElementsByClassName("tab-btn");
-            for (i = 0; i < tabbtn.length; i++) {
-                tabbtn[i].className = tabbtn[i].className.replace(" active", "");
-            }
+            for (i = 0; i < tabbtn.length; i++) { tabbtn[i].className = tabbtn[i].className.replace(" active", ""); }
             document.getElementById(namaTab).style.display = "block";
             evt.currentTarget.className += " active";
         }
@@ -401,13 +474,11 @@ textarea:focus {
             document.getElementById('hasilTeks').value = '';
 
             const butuhTanggal = ['template2', 'template3', 'template5', 'template6', 'template7', 'template8'];
-
             if (butuhTanggal.includes(kategori)) {
                 grupTanggal.style.display = 'flex'; 
             } else {
                 grupTanggal.style.display = 'none'; 
             }
-            
             inputPabx.focus();
         }
 
@@ -471,12 +542,12 @@ textarea:focus {
         // FUNGSI TAB 2: FORMAT KOMPULIR
         // ==========================================
         const dataKompulir = {
-            "1": "NIK SIAD : \nAninumber : \nNOMOR PELANGGAN : \nNama Pelanggan : \nTempat Lahir : \nTanggal Lahir : \nNomor Handphone di DSC : \nEmail : \nNIK Yang Tertera di Kontrak : \nNIK Yang Sesuai KTP : \nKETERANGAN PERMINTAAN ORDER PELANGGAN (KHUSUS REQ EDIT PROFILE) : ",
-            "2": "SUBJEK\nPABX : \nNAMA : \nJASTEL : \nEMAIL : \nCP : \nORDER ID : \nTGL TRANSAKSI : ",
-            "3": "Nama Agent : \nLogin : \nPABX : \nNo Indihome : \nJam Call : \nCase : \nDurasi : \nEvidence : ",
-            "4": "No Jastel : \nID Tiket : \nCreated Date : ",
-            "5": "Subjek : \nPABX : \nNo Jastel : \nReason : ",
-            "6": "Tgl / LoginAgent / ExtAvaya / Case / PABX / Jastel"
+            "1": "Update NIK\n\nNIK SIAD :\nAninumber :\nNOMOR PELANGGAN :\nNama Pelanggan :\nTempat Lahir :\nTanggal Lahir :\nNomor Handphone di DSC :\nEmail :\nNIK Yang Tertera di Kontrak :\nNIK Yang Sesuai KTP :\nKETERANGAN PERMINTAAN ORDER PELANGGAN (KHUSUS REQ EDIT PROFILE) :",
+            "2": "Resend Link\n\nSUBJEK\nPABX :\nNAMA :\nJASTEL :\nEMAIL :\nCP :\nORDER ID :\nTGL TRANSAKSI :",
+            "3": "Adjust AHT\n\nNama Agent :\nLogin :\nPABX :\nNo Indihome :\nJam Call :\nCase :\nDurasi :\nEvidence :",
+            "4": "Cek Insera\n\nNo Jastel :\nID Tiket :\nCreated Date :",
+            "5": "Release Call\n\nSubjek :\nPABX :\nNo Jastel :\nReason :",
+            "6": "Callback\n\nTgl / LoginAgent / ExtAvaya / Case / PABX / Jastel"
         };
 
         function getKompulir() {
@@ -484,7 +555,6 @@ textarea:focus {
             document.getElementById("hasilKompulir").value = dataKompulir[pilihan];
         }
 
-        // TAMBAHAN: Logika Clear Data untuk Kompulir
         function clearKompulir() {
             document.getElementById('kategoriKompulir').selectedIndex = 0;
             document.getElementById('hasilKompulir').value = '';
@@ -506,7 +576,7 @@ textarea:focus {
                 return;
             }
             let ppn = Math.round(dasar * 0.11);
-            let admin = 5550; // Admin 5000 + PPN 11%
+            let admin = 5550; 
             let total = dasar + ppn + admin;
 
             document.getElementById("outPpn").innerText = formatRp(ppn);
@@ -541,15 +611,12 @@ textarea:focus {
             document.getElementById("outTotalProrata").innerText = formatRp(totalProrata);
         }
 
-        // TAMBAHAN: Logika Clear Data untuk Kalkulator
         function clearKalkulator() {
-            // Bersihkan Input & Output Kalkulator PPN
             document.getElementById('hargaDasar').value = '';
             document.getElementById("outPpn").innerText = "Rp 0";
             document.getElementById("outAdmin").innerText = "Rp 5.550";
             document.getElementById("outTotalHarga").innerText = "Rp 0";
 
-            // Bersihkan Input & Output Kalkulator Prorata
             document.getElementById('hargaLama').value = '';
             document.getElementById('tglDariLama').value = '';
             document.getElementById('tglSampaiLama').value = '';
