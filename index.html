@@ -94,12 +94,21 @@
             font-family: inherit;
         }
 
-        select:focus, input:focus, textarea:focus {
-            background-color: #fff;
-            border-color: #667eea; 
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
+/* Untuk input form dan dropdown (tetap berubah putih) */
+select:focus, input:focus {
+    background-color: #fff;
+    border-color: #667eea; 
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Khusus untuk textarea (tetap gelap saat diklik) */
+textarea:focus {
+    background-color: #2d3748; /* Tetap gelap */
+    border-color: #667eea; /* Border berubah ungu/biru */
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
         
         /* --- Button Styles --- */
         .button-group { 
