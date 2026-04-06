@@ -250,6 +250,7 @@
 
             <div class="button-group">
                 <button onclick="getKompulir()" class="btn-generate">Get Template</button>
+                <button onclick="clearKompulir()" class="btn-clear">Clear Data</button>
             </div>
 
             <div class="output-group">
@@ -315,8 +316,9 @@
                 </div>
             </div>
 
-            <div class="button-group">
-                <button onclick="hitungProrata()" class="btn-copy" style="margin-top: 10px;">Hitung Prorata</button>
+            <div class="button-group" style="margin-top: 15px;">
+                <button onclick="hitungProrata()" class="btn-copy">Hitung Prorata</button>
+                <button onclick="clearKalkulator()" class="btn-clear">Clear Data</button>
             </div>
 
             <div class="total-box">
@@ -357,7 +359,6 @@
             inputTanggal.value = '';
             document.getElementById('hasilTeks').value = '';
 
-            // Menambahkan template 7 & 8 agar tanggal muncul
             const butuhTanggal = ['template2', 'template3', 'template5', 'template6', 'template7', 'template8'];
 
             if (butuhTanggal.includes(kategori)) {
@@ -374,14 +375,12 @@
             const pabx = document.getElementById('inputPabx').value;
             const tanggalRaw = document.getElementById('inputTanggal').value;
 
-            // 1. Validasi PABX (kecuali template 9 mungkin tidak butuh, tapi sebagai standar kita wajibkan)
             if(!pabx) {
                 alert("Harap isi data PABX / MSISDN-A terlebih dahulu!");
                 document.getElementById('inputPabx').focus();
                 return;
             }
 
-            // 2. Validasi Tanggal 
             const butuhTanggal = ['template2', 'template3', 'template5', 'template6', 'template7', 'template8'];
             if (butuhTanggal.includes(kategori) && !tanggalRaw) {
                 alert("Harap isi Tanggal Kejadian terlebih dahulu!");
@@ -444,6 +443,12 @@
             document.getElementById("hasilKompulir").value = dataKompulir[pilihan];
         }
 
+        // TAMBAHAN: Logika Clear Data untuk Kompulir
+        function clearKompulir() {
+            document.getElementById('kategoriKompulir').selectedIndex = 0;
+            document.getElementById('hasilKompulir').value = '';
+        }
+
         // ==========================================
         // FUNGSI TAB 3: KALKULATOR & PRORATA
         // ==========================================
@@ -493,6 +498,28 @@
             document.getElementById("outProrataLama").innerText = formatRp(prorataLama);
             document.getElementById("outProrataBaru").innerText = formatRp(prorataBaru);
             document.getElementById("outTotalProrata").innerText = formatRp(totalProrata);
+        }
+
+        // TAMBAHAN: Logika Clear Data untuk Kalkulator
+        function clearKalkulator() {
+            // Bersihkan Input & Output Kalkulator PPN
+            document.getElementById('hargaDasar').value = '';
+            document.getElementById("outPpn").innerText = "Rp 0";
+            document.getElementById("outAdmin").innerText = "Rp 5.550";
+            document.getElementById("outTotalHarga").innerText = "Rp 0";
+
+            // Bersihkan Input & Output Kalkulator Prorata
+            document.getElementById('hargaLama').value = '';
+            document.getElementById('tglDariLama').value = '';
+            document.getElementById('tglSampaiLama').value = '';
+            document.getElementById("outProrataLama").innerText = "Rp 0";
+
+            document.getElementById('hargaBaru').value = '';
+            document.getElementById('tglDariBaru').value = '';
+            document.getElementById('tglSampaiBaru').value = '';
+            document.getElementById("outProrataBaru").innerText = "Rp 0";
+
+            document.getElementById("outTotalProrata").innerText = "Rp 0";
         }
 
         // ==========================================
