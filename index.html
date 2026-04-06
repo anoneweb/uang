@@ -3,37 +3,402 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Planner</title>
+    <title>Copas!</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; max-width: 400px; }
-        label { display: block; margin-top: 10px; }
-        input, select { width: 100%; padding: 8px; margin-top: 5px; }
-        button { margin-top: 20px; padding: 10px; width: 100%; background: #007bff; color: white; border: none; cursor: pointer; }
+        /* --- Reset & Typography Dasar --- */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- Container Utama (Kartu) --- */
+        .main-card {
+            width: 100%;
+            max-width: 700px;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        h2 { 
+            text-align: center; 
+            color: #333; 
+            margin-bottom: 25px; 
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        /* --- Form Styles --- */
+        .form-group { 
+            display: flex; 
+            flex-direction: column; 
+            margin-bottom: 20px; 
+        }
+        
+        label { 
+            font-weight: 600; 
+            margin-bottom: 8px; 
+            color: #555; 
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        select, input[type="text"], input[type="date"] {
+            padding: 12px 15px;
+            border: 2px solid transparent; 
+            background-color: #f1f3f9; 
+            border-radius: 8px;
+            font-size: 15px;
+            width: 100%;
+            transition: all 0.3s ease; 
+            font-family: inherit;
+        }
+
+        select:focus, input:focus {
+            background-color: #fff;
+            border-color: #667eea; 
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        /* --- Button Styles --- */
+        .button-group { 
+            display: flex; 
+            gap: 12px; 
+            margin-top: 15px; 
+        }
+        button {
+            flex: 1; 
+            padding: 14px; 
+            color: white; 
+            border: none;
+            border-radius: 8px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:active {
+            transform: translateY(2px);
+        }
+
+        .btn-generate { 
+            background: linear-gradient(to right, #28a745, #20c997); 
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        .btn-clear { 
+            background: linear-gradient(to right, #dc3545, #f86c6b); 
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+        .btn-copy { 
+            background: linear-gradient(to right, #007bff, #6610f2); 
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        /* --- Output Area Styles --- */
+        .output-group { margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;}
+        #hasilTeks { 
+            width: 100%;
+            height: 350px; 
+            background-color: #2d3748; 
+            color: #e2e8f0;
+            font-family: 'Fira Code', 'Consolas', monospace; 
+            font-size: 14px; 
+            padding: 15px;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        #hasilTeks::-webkit-scrollbar { width: 8px; }
+        #hasilTeks::-webkit-scrollbar-track { background: #2d3748; }
+        #hasilTeks::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px;}
     </style>
 </head>
-<body>
-    <h2>Tambah Transaksi</h2>
-    <form id="transactionForm">
-        <label>Jenis:</label>
-        <select id="type">
-            <option value="expense">Pengeluaran</option>
-            <option value="income">Pemasukan</option>
-        </select>
+<body onload="sesuaikanForm()">
 
-        <label>Jumlah (Rp):</label>
-        <input type="number" id="amount" placeholder="Contoh: 50000" required>
+    <div class="main-card">
+        <h2>Template KIP & DSC</h2>
 
-        <label>Kategori:</label>
-        <input type="text" id="category" placeholder="Contoh: Makan, Tagihan, Aksesoris iPhone XR" required>
+        <div class="form-group">
+            <label for="kategori">Pilih Kategori:</label>
+            <select id="kategori" onchange="sesuaikanForm()">
+                <option value="template1">1. WSA TEKNIS / Kendala Internet</option>
+                <option value="template2">2. WSA NON TEKNIS / Percepatan Permintaan</option>
+                <option value="template3">3. GENERAL</option>
+                <option value="template4">4. NON WSA PROFILING / Edit SR</option>
+                <option value="template5">5. NON WSA BILLING</option>
+                <option value="template6">6. ITSD</option>
+                <option value="template7">7. Mobile Reguler</option>
+                <option value="template8">8. Mobile Network</option>
+                <option value="template9">9. Non Numbering / Kabel Terjuntai</option>
+            </select>
+        </div>
 
-        <label>Catatan:</label>
-        <input type="text" id="note" placeholder="Contoh: Beli casing baru">
+        <div class="form-group">
+            <label for="inputPabx">Masukkan Data PABX:</label>
+            <input type="text" id="inputPabx" placeholder="Ketik data PABX di sini">
+        </div>
 
-        <button type="submit">Simpan Transaksi</button>
-    </form>
+        <div class="form-group" id="grupTanggal">
+            <label for="inputTanggal">Pilih Tanggal Kejadian:</label>
+            <input type="date" id="inputTanggal">
+        </div>
 
-    <p id="statusMessage" style="color: green; font-weight: bold;"></p>
+        <div class="button-group">
+            <button onclick="buatTemplate()" class="btn-generate">Generate Teks</button>
+            <button onclick="clearForm()" class="btn-clear">Clear Data</button>
+        </div>
 
-    <script type="module" src="app.js"></script>
+        <div class="output-group">
+            <label for="hasilTeks">Hasil Template:</label>
+            <textarea id="hasilTeks" readonly placeholder="Hasil format teks akan muncul di sini"></textarea>
+            
+            <div class="button-group">
+                <button onclick="copyTeks()" class="btn-copy">Copy Hasil Teks</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk mengatur tampilan form berdasarkan kategori
+        function sesuaikanForm() {
+            const kategori = document.getElementById('kategori').value;
+            const grupTanggal = document.getElementById('grupTanggal');
+            const inputPabx = document.getElementById('inputPabx');
+            const inputTanggal = document.getElementById('inputTanggal');
+
+            // Kosongkan input saat ganti kategori
+            inputPabx.value = '';
+            inputTanggal.value = '';
+            document.getElementById('hasilTeks').value = '';
+
+            // Template yang butuh tanggal: 2, 3, 5, 6
+            const butuhTanggal = ['template2', 'template3', 'template5', 'template6'];
+
+            if (butuhTanggal.includes(kategori)) {
+                grupTanggal.style.display = 'flex'; // Tampilkan pemilih tanggal
+            } else {
+                grupTanggal.style.display = 'none'; // Sembunyikan pemilih tanggal
+            }
+            
+            inputPabx.focus();
+        }
+
+        function buatTemplate() {
+            const kategori = document.getElementById('kategori').value;
+            const pabx = document.getElementById('inputPabx').value;
+            const tanggalRaw = document.getElementById('inputTanggal').value;
+
+            // 1. Validasi PABX
+            if(!pabx) {
+                alert("Harap isi data PABX terlebih dahulu!");
+                document.getElementById('inputPabx').focus();
+                return;
+            }
+
+            // 2. Validasi Tanggal (Hanya jika template membutuhkan tanggal)
+            const butuhTanggal = ['template2', 'template3', 'template5', 'template6'];
+            if (butuhTanggal.includes(kategori) && !tanggalRaw) {
+                alert("Harap isi Tanggal Kejadian terlebih dahulu!");
+                document.getElementById('inputTanggal').focus();
+                return;
+            }
+
+            // Ubah format tanggal dari YYYY-MM-DD menjadi DD-MM-YYYY
+            let tanggalFormatted = "";
+            if (tanggalRaw) {
+                const parts = tanggalRaw.split('-');
+                tanggalFormatted = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+
+            let template = "";
+
+            if (kategori === 'template1') {
+                template = `${pabx} / CASE
+
+${pabx} / NoIH / Case / HVC
+Nama Pelanggan : 
+CP : 
+Detail case : 
+Lapul/Gaul : 
+Status Nomor di DSC : 
+Sub Status : 
+Status Pembayaran : 
+Type ONT : 
+Capt lightshoot : 
+KATEGORI : `;
+
+            } else if (kategori === 'template2') {
+                template = `${pabx} / CASE
+
+${pabx} / NoIH / Case / HVC
+Nama Pelanggan : 
+CP : 
+Email : 
+Detail case : 
+Tgl Kejadian : ${tanggalFormatted}
+Order ID permintaan : 
+Status Order : 
+Solusi yang diberikan : 
+Lapul/Gaul : 
+Capt lightshoot : 
+KATEGORI : `;
+
+            } else if (kategori === 'template3') {
+                template = `${pabx} / CASE
+
+${pabx} / NoIH / Case / HVC
+Nama Pelanggan : 
+CP : 
+Email : 
+OrderID : 
+Status order : 
+Detail case : 
+Tanggal kejadian : ${tanggalFormatted}
+Solusi yang diberikan : 
+Lapul / Gaul : 
+Capt lightshoot : 
+KATEGORI : 
+K-Kontak : `;
+
+            } else if (kategori === 'template4') {
+                template = `${pabx} / CASE
+
+${pabx} / NoIH / Case / HVC
+Nama Pelanggan : 
+NIK : 
+TTL : 
+CP : 
+Email : 
+Detail case : 
+Solusi yang diberikan : 
+Capt lightshoot : 
+KATEGORI : `;
+
+            } else if (kategori === 'template5') {
+                template = `${pabx} / CASE
+
+${pabx} / NoIH / Case / HVC
+Nama Pelanggan : 
+CP : 
+Email : 
+Detail case : 
+Order ID permintaan : 
+FA ID : 
+Tanggal kejadian : ${tanggalFormatted}
+Solusi yang diberikan : 
+Lapul/Gaul : 
+Status Nomor di DSC : 
+Sub Status : 
+Status Pembayaran : 
+Capt lightshoot FA : 
+KATEGORI : `;
+
+            } else if (kategori === 'template6') {
+                template = `${pabx} / CASE
+
+${pabx} / NoIH / Case / HVC
+Nomor IndiHome / Nomor Internet : 
+Nama Pelanggan : 
+NIK Pelanggan : 
+No. HP Pelanggan : 
+Email Pelanggan : 
+Order ID : 
+Tanggal Kejadian: ${tanggalFormatted}
+Kendala/inti gangguan : 
+Capture Error : 
+Dear rekan IT Service Desk mohon bantu`;
+
+            } else if (kategori === 'template7') {
+                template = `REG/INT/CORP SILVER/DIAMOND/PLATINUM
+Nama Customer : 
+MSISDN-A Yang Menghubungi : ${pabx}
+MSISDN-B Yang Bermasalah : 
+Tanggal / Jam Kejadian : 
+Lokasi Pelanggan (alamat) : 
+Segmentasi Kartu : 
+SIM Capability : 
+Customer Tier Pelanggan : 
+Case Owner : Call Center Semarang
+Detail Complaint : 
+Additional Information : 
+Solusi yang telah diberikan : `;
+
+            } else if (kategori === 'template8') {
+                template = `REG/INT/CORP SILVER/DIAMOND/PLATINUM
+Nama Customer : 
+MSISDN-A Yang Menghubungi : ${pabx}
+MSISDN-B Yang Bermasalah : 
+Tanggal / Jam Kejadian : 
+Lokasi Pelanggan (alamat) : 
+Koordinat customer : 
+Segmentasi Kartu : 
+SIM Capability : 
+Customer Tier Pelanggan : 
+Case Owner : Call Center Semarang
+Detail Complaint : 
+Additional Information : 
+Capture bukti pelanggan : 
+Capture CCA : 
+Hasil analisa CCA : 
+Possible root Cause : 
+Remarks : 
+Suggestion : 
+Solusi yang telah diberikan : `;
+
+            } else if (kategori === 'template5') {
+                template = `${pabx} / CASE
+
+Pelapor : 
+Email : 
+CP : 
+#LocationIncident
+Provinsi : 
+Kota / Kab : 
+Kecamatan : 
+Kelurahan : 
+Witel : 
+Nama Jalan : 
+Patokan : 
+Deskripsi : `;
+            }
+
+            document.getElementById('hasilTeks').value = template;
+        }
+
+        function clearForm() {
+            document.getElementById('inputPabx').value = '';
+            document.getElementById('inputTanggal').value = '';
+            document.getElementById('hasilTeks').value = '';
+            document.getElementById('inputPabx').focus();
+        }
+
+        function copyTeks() {
+            const teks = document.getElementById('hasilTeks');
+            if(!teks.value) {
+                alert("Belum ada teks yang bisa dicopy!");
+                return;
+            }
+            teks.select();
+            teks.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(teks.value)
+                .then(() => alert("Teks berhasil disalin!"))
+                .catch(err => alert("Gagal menyalin teks."));
+        }
+    </script>
+
 </body>
 </html>
