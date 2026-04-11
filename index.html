@@ -287,6 +287,7 @@
                     <option value="template7">7. Mobile Reguler</option>
                     <option value="template8">8. Mobile Network</option>
                     <option value="template9">9. Non Numbering / Kabel Terjuntai</option>
+                    <option value="template10">10. ONT Obsolete</option>
                 </select>
             </div>
 
@@ -327,6 +328,7 @@
                     <option value="4">4. Cek Insera</option>
                     <option value="5">5. Release Call</option>
                     <option value="6">6. Callback</option>
+                    <option value="7">7. K-Kontak</option>
                 </select>
             </div>
 
@@ -525,8 +527,13 @@
             } else if (kategori === 'template8') {
                 template = `REG/INT/CORP SILVER/DIAMOND/PLATINUM\nNama Customer : \nMSISDN-A Yang Menghubungi : ${pabx}\nMSISDN-B Yang Bermasalah : \nTanggal / Jam Kejadian : ${tanggalFormatted}\nLokasi Pelanggan (alamat) : \nKoordinat customer : \nSegmentasi Kartu : \nSIM Capability : \nCustomer Tier Pelanggan : \nCase Owner : Call Center Semarang\nDetail Complaint : \nAdditional Information : \nCapture bukti pelanggan : \nCapture CCA : \nHasil analisa CCA : \nPossible root Cause : \nRemarks : \nSuggestion : \nSolusi yang telah diberikan : `;
             } else if (kategori === 'template9') {
-                template = `${pabx} / CASE\n\nPelapor : \nEmail : \nCP : \n#LocationIncident\nProvinsi : \nKota / Kab : \nKecamatan : \nKelurahan : \nWitel : \nNama Jalan : \nPatokan : \nDeskripsi : `;
+                template = `${pabx} / CASE\n\n${pabx} / NoIH / Case / HVC\nPelapor : \nEmail : \nCP : \n#LocationIncident\nProvinsi : \nKota / Kab : \nKecamatan : \nKelurahan : \nWitel : \nNama Jalan : \nPatokan : \nDeskripsi : `;
+            } else if (kategori === 'template10') {
+                template = `${pabx} / ONT Obsolete\n\n${pabx} / NoIH / Perlu pergantian ONT karena Obsolete / ONT / HVC\nNama Pelanggan : \nCP : \nDetail case : Status ONT Obsolete Version, mohon bantuan pergantian ONT pelanggan dikarenakan obsolete\nLapul/Gaul : \nStatus Nomor di DSC : \nSub Status : \nStatus Pembayaran : \nType ONT : \nCapt lightshoot : \nKATEGORI : `;
             }
+
+            document.getElementById('hasilTeks').value = template;
+        }
 
             document.getElementById('hasilTeks').value = template;
         }
@@ -547,7 +554,8 @@
             "3": "Nama Agent : \nLogin : \nPABX : \nNo Indihome : \nJam Call : \nCase : \nDurasi : \nEvidence : ",
             "4": "No Jastel : \nID Tiket : \nCreated Date : ",
             "5": "Subjek : \nPABX : \nNo Jastel : \nReason : ",
-            "6": "Tgl / LoginAgent / ExtAvaya / Case / PABX / Jastel"
+            "6": "Tgl / LoginAgent / ExtAvaya / Case / PABX / Jastel",
+            "7": "Call in;Perner;PABX;Nama Pelanggan;No Jastel;No Hp;Tanggal;Alasan Cabut;Status CAPS; Keberhasilan retensi"
         };
 
         function getKompulir() {
