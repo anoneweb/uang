@@ -263,7 +263,7 @@
         
         <div class="header-container">
             <h2>Welcome, </h2>
-            <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Ganti Tema">ðŸŒ™</button>
+            <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
         </div>
 
         <div class="tab-menu">
@@ -351,7 +351,7 @@
             
             <div class="running-text-container">
                 <div class="running-text">
-                    âš ï¸ HATI-HATI SAAT PENYAMPAIAN TAGIHAN, GUNAKAN KATA: KISARAN / KURANG LEBIH / KIRA-KIRA / SEKITAR / DSB âš ï¸
+                    ⚠️ HATI-HATI SAAT PENYAMPAIAN TAGIHAN, GUNAKAN KATA: KISARAN / KURANG LEBIH / KIRA-KIRA / SEKITAR / DSB ⚠️
                 </div>
             </div>
 
@@ -430,7 +430,7 @@
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
-                document.getElementById('themeToggleBtn').innerText = 'â˜€ï¸';
+                document.getElementById('themeToggleBtn').innerText = '☀️';
             }
         }
 
@@ -441,11 +441,11 @@
             if (htmlTag.getAttribute('data-theme') === 'dark') {
                 htmlTag.removeAttribute('data-theme');
                 localStorage.setItem('theme', 'light');
-                btn.innerText = 'ðŸŒ™';
+                btn.innerText = '🌙';
             } else {
                 htmlTag.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
-                btn.innerText = 'â˜€ï¸';
+                btn.innerText = '☀️';
             }
         }
 
@@ -531,9 +531,6 @@
             } else if (kategori === 'template10') {
                 template = `${pabx} / ONT Obsolete\n\n${pabx} / NoIH / Perlu pergantian ONT karena Obsolete / ONT / HVC\nNama Pelanggan : \nCP : \nDetail case : Status ONT Obsolete Version, mohon bantuan pergantian ONT pelanggan dikarenakan obsolete\nLapul/Gaul : \nStatus Nomor di DSC : \nSub Status : \nStatus Pembayaran : \nType ONT : \nCapt lightshoot : \nKATEGORI : `;
             }
-
-            document.getElementById('hasilTeks').value = template;
-        }
 
             document.getElementById('hasilTeks').value = template;
         }
