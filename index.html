@@ -576,12 +576,12 @@
             let dasar = parseFloat(document.getElementById("hargaDasar").value) || 0;
             if (dasar === 0) {
                 document.getElementById("outPpn").innerText = "Rp 0";
-                document.getElementById("outAdmin").innerText = "Rp 5.550";
+                document.getElementById("outAdmin").innerText = "Rp 8.325";
                 document.getElementById("outTotalHarga").innerText = "Rp 0";
                 return;
             }
             let ppn = Math.round(dasar * 0.11);
-            let admin = 5550; 
+            let admin = 8325; 
             let total = dasar + ppn + admin;
 
             document.getElementById("outPpn").innerText = formatRp(ppn);
@@ -619,7 +619,7 @@
         function clearKalkulator() {
             document.getElementById('hargaDasar').value = '';
             document.getElementById("outPpn").innerText = "Rp 0";
-            document.getElementById("outAdmin").innerText = "Rp 5.550";
+            document.getElementById("outAdmin").innerText = "Rp 8.325";
             document.getElementById("outTotalHarga").innerText = "Rp 0";
 
             document.getElementById('hargaLama').value = '';
