@@ -511,7 +511,7 @@
             let template = "";
 
             if (kategori === 'template1') {
-                template = `${pabx} / CASE\n\n${pabx} / NoIH / Case / HVC \nNama Pelanggan : \nCP : \nDetail case : \nLapul/Gaul : \nStatus Nomor di DSC : \nSub Status : \nStatus Pembayaran : \nType ONT : \nCapt lightshoot : \ncapture full tampak topologi jaringan hingga ke ONT : \ncapture informasi gamas :\nKATEGORI : \nHasil ukur : `;
+                template = `${pabx} / CASE\n\n${pabx} / NoIH / Case / HVC \nNama Pelanggan : \nCP : \nDetail case : \nLapul/Gaul : \nCapt lightshoot : \n- Capture hasil ukur hanya untuk yg di KIP DSC null / tidak ada hasil ukur : \n- Capture informasi gamas : `;
             } else if (kategori === 'template2') {
                 template = `${pabx} / CASE\n\n${pabx} / NoIH / Case / HVC \nNama Pelanggan : \nCP : \nEmail : \nDetail case : \nTgl Kejadian : ${tanggalFormatted}\nOrder ID permintaan : \nStatus Order : \nSolusi yang diberikan : \nLapul/Gaul : \nCapt lightshoot : \nKATEGORI : `;
             } else if (kategori === 'template3') {
